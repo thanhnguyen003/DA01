@@ -34,3 +34,7 @@ where first_name = 'Amitah'
 --ex10
 select substring(title from (length(winery)+2) for 4), title from winemag_p2
 where country = 'Macedonia'
+--ex7
+Select count(distinct user_id) as active_users, activity_date as day from Activity
+where activity_date between '2019-06-27' and '2019-07-27'
+Group by day
