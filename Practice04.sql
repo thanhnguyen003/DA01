@@ -36,10 +36,10 @@ from titanic
 Group by category
 --ex3, bài này em tính đúng rồi (5.500000000) mà cứ round là nó lên thành 10.00 thay vì 5.5. Anh chữa giúp e với ạ
 SELECT
-round(cast(sum(Case
+round(100* cast(sum(Case
 when call_category ='n/a'then 1.0
 when call_category is NULL then 1.0 else 0.0
 End) as decimal)/ 
-cast(count(policy_holder_id) as decimal),1) *100.0
+cast(count(policy_holder_id) as decimal),1)
 as uncategorised_call_pct
 FROM callers
