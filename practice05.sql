@@ -1,5 +1,5 @@
 --ex1 (bài này cái oceania của em cũng lệch 1 đơn vị em cũng k hiểu tại sao)
-select b.continent as continent, round(avg(a.population),0) as avg_population from city as a
+select b.continent as continent, floor(avg(a.population)) as avg_population from city as a
 inner join country as b
 On a.countrycode =b.code
 Group by b.continent
@@ -28,11 +28,12 @@ On a.product_id = b.product_id
 Group by a.customer_id
 having count ( DISTINCT b.product_category) =3
 --ex5 (bài này em cứ round cái avg(emp.age) là nó ra kết quả khác hẳn ấy ạ)
-Select mng.employee_id,mng.name,count(emp.reports_to) as reports_count,avg(emp.age) as average_age
+Select mng.employee_id,mng.name,count(emp.reports_to) as reports_count,round(avg(emp.age)) as average_age
 From employees as emp
 Join employees as mng
 On emp.reports_to=mng.employee_id
 Group by mng.employee_id, mng.name
+order by mng.employee_id
 --ex6
 select b.product_name, sum(a.unit) as unit
 From orders as a
