@@ -45,21 +45,27 @@ Case
 when lag1 is null and lag2 is null then round(cast (tweet_count as decimal)/1,2)
 when lag2 is null then round(cast ((tweet_count+lag1) as decimal)/2,2)
 else round(cast((tweet_count+lag1+lag2)as decimal)/3,2) END from a
---ex6: somehow nó vẫn sai ạ
-with a as (SELECT
-  transaction_id
-  merchant_id, 
-  credit_card_id, 
-  amount, 
-  transaction_timestamp,Lead(transaction_timestamp) OVER (
-    PARTITION BY merchant_id, credit_card_id, amount 
-    ORDER BY transaction_timestamp
-  ) as after_timestamp,
-  extract( minute from Lead(transaction_timestamp) OVER (
-    PARTITION BY merchant_id, credit_card_id, amount 
-    ORDER BY transaction_timestamp
-  ) -transaction_timestamp) AS difference
-FROM transactions)
+--ex6:
+WITH a AS (
+    SELECT
+        transaction_id,
+        merchant_id, 
+        credit_card_id, 
+        amount, 
+        transaction_timestamp,
+        LEAD(transaction_timestamp) OVER (
+            PARTITION BY merchant_id, credit_card_id, amount 
+            ORDER BY transaction_timestamp
+        ) as after_timestamp,
+        60 * EXTRACT(hour FROM LEAD(transaction_timestamp) OVER (
+            PARTITION BY merchant_id, credit_card_id, amount 
+            ORDER BY transaction_timestamp
+        )) + EXTRACT(minute FROM LEAD(transaction_timestamp) OVER (
+            PARTITION BY merchant_id, credit_card_id, amount 
+            ORDER BY transaction_timestamp
+        )) -
+        (60 * EXTRACT(hour FROM transaction_timestamp) + EXTRACT(minute FROM transaction_timestamp)) AS difference
+    FROM transactions)
 SELECT COUNT(merchant_id) AS payment_count
 FROM a
 WHERE difference <= 10
