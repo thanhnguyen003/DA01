@@ -74,13 +74,18 @@ Update sales_dataset_rfm_prj
 Set year_id= extract (year from orderdate)
 --ex5
 	--cách 1
-with z as (Select quantityordered, 
+with z as (Select quantityordered, ordernumber,
 (select avg(quantityordered) from sales_dataset_rfm_prj) as avg, 
 (select stddev(quantityordered) from sales_dataset_rfm_prj) as stddev
-from sales_dataset_rfm_prj)
-Select quantityordered, (quantityordered-avg)/stddev as z_score
+from sales_dataset_rfm_prj),
+outlier as (
+Select quantityordered, ordernumber as ord,
+(quantityordered-avg)/stddev as z_score
 From z
-where abs((quantityordered-avg)/stddev)>2
+where abs((quantityordered-avg)/stddev)>2)
+
+Delete from public.sales_dataset_rfm_prj
+where ordernumber in (select ord from outlier)
 	--cách 2
 with x as (select Q1-1.5*IQR as min_value, Q3+1.5*IQR as max_value
 from
