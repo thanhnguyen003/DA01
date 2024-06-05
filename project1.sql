@@ -80,7 +80,7 @@ with z as (Select quantityordered,
 from sales_dataset_rfm_prj)
 Select quantityordered, (quantityordered-avg)/stddev as z_score
 From z
-where abs((quantityordered-avg)/stddev))>2
+where abs((quantityordered-avg)/stddev)>2
 	--cách 2
 with x as (select Q1-1.5*IQR as min_value, Q3+1.5*IQR as max_value
 from
@@ -92,7 +92,7 @@ percentile_cont(0.75)
 within group (order by quantityordered) -
 percentile_cont(0.25) 
 within group (order by quantityordered) as IQR
-From sales_dataset_rfm_prj))
+From sales_dataset_rfm_prj)) as subquery
 Select * from sales_dataset_rfm_prj
 where quantityordered < (select min_value from x)
 Or quantityordered > (select max_value from x)
